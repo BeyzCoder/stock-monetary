@@ -34,7 +34,7 @@ def fetch(url: str, freq: str, params: Dict=None, headers: Dict=None) -> str:
         return resp.text
     return ""
 
-def get_statement(symbol: str, state: Statement, freq: str) -> Dict:
+def get_statement(symbol: str, state: Statement, freq: str, form: str) -> Dict:
     """
     Grab the financial statement of the company from the user's chosen ticker symbol.
 
@@ -53,6 +53,9 @@ def get_statement(symbol: str, state: Statement, freq: str) -> Dict:
     # Building the data.
     raw_data = financial.parse(result)
     cleaned = financial.cleanse(raw_data)
+
+    if form == "dataframe":
+        cleaned = financial.form_dataframe(cleaned)
 
     return cleaned
 

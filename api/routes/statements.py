@@ -26,11 +26,11 @@ from api.webscrape import request
 router = APIRouter()
 
 @router.get("/income")
-async def income_statement(symbol: str = "", freq: Optional[str] = "A") -> JSONResponse:
+async def income_statement(symbol: str = "", freq: Optional[str] = "A", formstyle: Optional[str] = "default") -> JSONResponse:
     # Prompt them a usage.
     if symbol == "": raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=http.BAD_REQUEST_PROMPT)
 
-    data = request.get_statement(symbol, Statement.URL_INCOME_STATEMENT.value, freq)
+    data = request.get_statement(symbol, Statement.URL_INCOME_STATEMENT.value, freq, formstyle)
     if data == {}: 
         # Insert the user's input for them to double check it quickly.
         detail = http.NOT_FOUND_PROMPT.copy()
@@ -40,11 +40,11 @@ async def income_statement(symbol: str = "", freq: Optional[str] = "A") -> JSONR
     return JSONResponse(status_code=status.HTTP_200_OK, content=data, media_type="application/json")
 
 @router.get("/balance")
-async def balance_statement(symbol: str = "", freq: Optional[str] = "A") -> JSONResponse:
+async def balance_statement(symbol: str = "", freq: Optional[str] = "A", formstyle: Optional[str] = "default") -> JSONResponse:
     # Prompt them a usage.
     if symbol == "": raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=http.BAD_REQUEST_PROMPT)
     
-    data = request.get_statement(symbol, Statement.URL_BALANCE_STATEMENT.value, freq)
+    data = request.get_statement(symbol, Statement.URL_BALANCE_STATEMENT.value, freq, formstyle)
     if data == {}: 
         # Insert the user's input for them to double check it quickly.
         detail = http.NOT_FOUND_PROMPT.copy()
@@ -54,11 +54,11 @@ async def balance_statement(symbol: str = "", freq: Optional[str] = "A") -> JSON
     return JSONResponse(status_code=status.HTTP_200_OK, content=data, media_type="application/json")
 
 @router.get("/cash")
-async def cash_statement(symbol: str = "", freq: Optional[str] = "A") -> JSONResponse:
+async def cash_statement(symbol: str = "", freq: Optional[str] = "A", formstyle: Optional[str] = "default") -> JSONResponse:
     # Prompt them a usage.
     if symbol == "": raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=http.BAD_REQUEST_PROMPT)
     
-    data = request.get_statement(symbol, Statement.URL_CASH_STATEMENT.value, freq)
+    data = request.get_statement(symbol, Statement.URL_CASH_STATEMENT.value, freq, formstyle)
     if data == {}: 
         # Insert the user's input for them to double check it quickly.
         detail = http.NOT_FOUND_PROMPT.copy()

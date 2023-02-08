@@ -95,6 +95,19 @@ def cleanse(raw_data: List[Dict]) -> Dict:
     
     return clean_data
 
+def form_dataframe(data: Dict) -> Dict:
+    """TODO"""
+    placeholder = {}
+
+    new_form = {}
+    for key, val in data.items():
+        if len(new_form) == 0:
+            new_form["Years"] = list(val.keys())
+        placeholder[key] = list(val.values())
+
+    new_form.update(placeholder)
+    return new_form
+
 if __name__ == "__main__":
     # dev check code.
     # with open("test/samples/finance_O.html") as handle:
@@ -103,4 +116,7 @@ if __name__ == "__main__":
 
     #     clean_data = cleanse(raw_data)
     #     # print(json.dumps(clean_data, indent=2))
+
+    #     df = form_dataframe(clean_data)
+    #     # print(json.dumps(df, indent=2))
     pass
