@@ -18,23 +18,30 @@ import requests as req
 import json     # For printing output in the terminal.
 
 # TODO: Must able to catch what type of status code.
-def fetch(url: str, freq: str, params: Dict=None, headers: Dict=None) -> str:
+def fetch(url: str, **kwargs: Dict) -> str:
     """
     Send out a request get to the url.
 
     @param url: The url that will be send out a request.
     @return: response text of the request.
     """
-    if freq == "A":
-        resp = req.get(url, params=params, headers=headers)
+    content = {"params" : None, "headers" : None}
+    if "params" in kwargs and "headers" in kwargs:
+        content["params"] = kwargs["params"]
+        content["headers"] = kwargs["headers"]
+
+    if "freq" in kwargs:
+        resp = req.get(url, **content)
+        resp = req.get(resp.url+"?freq="+kwargs["freq"], **content)
     else:
-        resp = req.get(url, params=params, headers=headers)
-        resp = req.get(resp.url+"?freq="+freq, params=params, headers=headers)
+        resp = req.get(url, params=content["params"], headers=content["headers"])
+    
     if resp.status_code == 200:
         return resp.text
+    
     return ""
 
-def get_statement(symbol: str, state: Statement, freq: str, form: str) -> Dict:
+def get_statement(symbol: str, state: Statement, **kwargs: Dict) -> Dict:
     """
     Grab the financial statement of the company from the user's chosen ticker symbol.
 
@@ -45,7 +52,12 @@ def get_statement(symbol: str, state: Statement, freq: str, form: str) -> Dict:
     @return: Usable data for analytical and logical.
     """
     # TODO: Must check if state url passed right.
-    result = fetch(state.format(symbol), freq, params=None, headers=None)
+    result = ""
+    if "freq" in kwargs:
+        result = fetch(state.format(symbol), freq=kwargs["freq"])
+    else:
+        result = fetch(state.format(symbol))
+
     # Check if the requests return nothing
     if result == "":
         return {}
@@ -54,7 +66,7 @@ def get_statement(symbol: str, state: Statement, freq: str, form: str) -> Dict:
     raw_data = financial.parse(result)
     cleaned = financial.cleanse(raw_data)
 
-    if form == "dataframe":
+    if "setup" in kwargs:
         cleaned = financial.form_dataframe(cleaned)
 
     return cleaned
@@ -76,7 +88,7 @@ def get_price(symbol: str) -> Dict:
     }
     
     data = { "Message" : "The lists are correspond to one another." }
-    result = fetch(URL_HISTORY_PRICE.format(symbol), "A", params=params, headers=headers)
+    result = fetch(URL_HISTORY_PRICE.format(symbol), params=params, headers=headers)
     # Check if the requests return nothing
     if result == "":
         return {}
