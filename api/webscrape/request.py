@@ -71,16 +71,16 @@ def get_statement(symbol: str, state: Statement, **kwargs: Dict) -> Dict:
 
     return cleaned
 
-def get_price(symbol: str) -> Dict:
+def get_price(symbol: str, range: str = "1y", interval: str = "1d", event: str = "history") -> Dict:
     """
     TODO
     """
     # Build the params and headers for the request.
     # For now default params.
     params = {
-        "range" : "1y",
-        "interval" : "1d",
-        "events" : "history"
+        "range" : range,
+        "interval" : interval,
+        "events" : event
     }
 
     headers = {

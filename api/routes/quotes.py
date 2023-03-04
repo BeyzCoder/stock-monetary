@@ -12,6 +12,7 @@ sys.path.append(os.getcwd())
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
+from typing import Union
 
 from api.errors import http
 from api.webscrape import request
@@ -22,11 +23,15 @@ from api.webscrape import request
 router = APIRouter()
 
 @router.get("/history-price")
-async def history_price(symbol: str = "") -> JSONResponse:
+async def history_price(symbol: str = "", range: Union[str, None] = None) -> JSONResponse:
     # Prompt them a usage.
     if symbol == "": raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=http.BAD_REQUEST_PROMPT)
 
-    data = request.get_price(symbol)
+    query_parameters = {}
+    if not range is None:
+        query_parameters['range'] = range
+
+    data = request.get_price(symbol, **query_parameters)
     if data == {}:
         # Insert the user's input for them to double check it quickly.
         detail = http.NOT_FOUND_PROMPT.copy()
